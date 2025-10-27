@@ -1,13 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="#">
-  <title>CHANGE THIS TITLE</title>
-</head>
-<body>
-  <div id="login-form-container"></div>
-  <div id="app"></div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Typing Speed Test</title>
+  </head>
+  <body>
+    <main>
+      <h1>Test Your Typing Speed</h1>
+      <div class="timer-container">
+        <p id="timer" class="timer">00:00</p>
+      </div>
+      <div class="control-buttons-container">
+        <div class="buttons">
+          <span id="start-button" class="button start-button">Start</span>
+          <span id="stop-button" class="button stop-button">Stop</span>
+        </div>
+      </div>
+      <div class="sentence-container">
+        <p id="random-sentence" class="random-sentence">
+          Maecenas scelerisque, metus id fermentum blandit, purus ante suscipit magna, in aliquet
+          felis ex nec purus.
+        </p>
+      </div>
+      <div class="form-container">
+        <form>
+          <textarea type="text" id="user-input" class="user-input">
+Maecenas scelerisque, metus id fermentum blandit, purus ante suscipit magna, in aliquet felis ex nec purus.</textarea
+          >
+        </form>
+      </div>
+      <div class="results-container">
+        <span id="typing-speed" class="typing-speed">-</span>
+        <span id="typing-accuracy" class="typing-accuracy">-</span>
+      </div>
+    </main>
+  </body>
 </html>

@@ -36,7 +36,7 @@ ___
 ### If you see this, you are set to go!
 ![lit-screen](https://user-images.githubusercontent.com/29741570/190486162-27e9032d-266f-4962-a85c-fc40c58f33db.png)
 
-**NOTES:** 
+**NOTES:**
 - Changes you make to the project will make the browser reload on save...no more hard refresh unless something goes wrong.
 - You will no longer be using the `hs -o` command. To start your server, you will run `npm start`
 
@@ -80,12 +80,12 @@ init();
 - Build Command: `npm run build`
 - Publish directory: `dist`
 - Add Environmental Variables (NOT REQUIRED for Apps that do not use API Keys, etc)
-    - Any Enviromental variables you are using in your `.env` file should be added to Netlify. 
+    - Any Enviromental variables you are using in your `.env` file should be added to Netlify.
         - Go to Site settings > Build & deploy > Environment > Environment variables and the keys and values there.
 
 - Update Firebase URL Settings
     - In Firebase under Authentication select sign in methods, scroll to Authorized domains. Add your Netlify URL.
-        
+
 ## More Info and Resources on Webpack
 - Visit the [Webpack documentation](https://webpack.js.org/concepts/) if you want to explore more.
 - [Info on our Webpack Config](https://github.com/nss-nightclass-projects/Night-Class-Resources/blob/master/book-2-patterns-and-tools/chapters/webpack-configure.md)

@@ -24,7 +24,6 @@ let state = {
   selectedSentence: '',
   startTime: null,
   timerInterval: null,
-  elapsedTime: '00:00',
 };
 
 // Constants
@@ -60,9 +59,22 @@ const grabRandomSentence = (sentences) => {
   return selectedSentence;
 };
 
+const calculateSpeed = () => {
+  const el = Element.get('user-input');
+  const inputValue = (el.value || '').trim();
+
+  const words = inputValue ? inputValue.split(' ') : 0;
+  const wordCount = words.length;
+  const minutes = state.elapsedMil / 60000;
+  const wpm = minutes > 0 ? Math.floor(wordCount / minutes) : 0;
+
+  return wpm;
+};
+
 function endTest() {
   const { isTestRunning } = state;
   if (!isTestRunning) return;
+  updateState({ isTestRunning: false });
 
   Element.get(USER_INPUT_ID).disabled = true;
   if (state.timerInterval) {
@@ -70,7 +82,7 @@ function endTest() {
     updateState({ timerInterval: null });
   }
 
-  updateState({ isTestRunning: false });
+  Element.set('typing-speed', calculateSpeed());
 }
 
 const formatTime = (milliseconds) => {
@@ -96,6 +108,8 @@ const updateTimer = () => {
     return;
   }
   const elapsedMil = Date.now() - state.startTime;
+  updateState({ elapsedMil });
+
   const timeString = formatTime(elapsedMil);
   Element.set('timer', timeString);
 };

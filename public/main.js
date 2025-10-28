@@ -238,6 +238,5 @@ const startApp = () => {
 startApp();
 // Stretch Goals
 
-// TODO: Hide and show button on stop and start!
 // TODO: Add character counter on inpit (characters left)
 // TODO: then also add their error coun there too

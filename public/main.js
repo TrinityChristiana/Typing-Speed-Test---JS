@@ -18,13 +18,15 @@ const sentenceArray = [
   'I know many children ask for a pony, but I wanted a bicycle with rockets strapped to it.',
   'Imagine his surprise when he discovered that the safe was full of pudding.',
 ];
-
-let state = {
+const defaultState = {
   isTestRunning: false,
   selectedSentence: '',
+  triesPerWord: null,
   startTime: null,
   timerInterval: null,
 };
+
+let state = defaultState;
 
 // Constants
 const RANDOM_SENTENCE_EL_ID = 'random-sentence';
@@ -71,6 +73,15 @@ const calculateSpeed = () => {
   return wpm;
 };
 
+const calculateTotalAccuracy = () => {
+  const accuracy = state.triesPerWord.reduce(
+    (p, c) => (p + c.accuracy) / 2,
+    100
+  );
+
+  return `${Math.floor(accuracy)}%`;
+};
+
 function endTest() {
   const { isTestRunning } = state;
   if (!isTestRunning) return;
@@ -83,6 +94,7 @@ function endTest() {
   }
 
   Element.set('typing-speed', calculateSpeed());
+  Element.set('typing-accuracy', calculateTotalAccuracy());
 }
 
 const formatTime = (milliseconds) => {
@@ -122,17 +134,57 @@ const startTimer = () => {
 
 // Event Handlers
 const handleUserInput = (e) => {
+  const { data } = e;
   const { value } = e.target;
   const { selectedSentence } = state;
+  const { triesPerWord = [] } = state;
+  const prevTriesPerWord = [...triesPerWord];
+  const currentWordindx = value.trim().split(' ').length - 1;
 
-  if (value === selectedSentence) endTest();
+  if (String(value).endsWith(' ') || data === null) {
+    const sentenceSplit = selectedSentence.split(' ');
+    prevTriesPerWord[currentWordindx].tries += 1;
+
+    const { word } = prevTriesPerWord[currentWordindx];
+    const currentWord = value.trim().split(' ').slice(-1)[0];
+    if (currentWord !== word) {
+      const newSentence = sentenceSplit.slice(0, currentWordindx).join(' ');
+      // eslint-disable-next-line operator-linebreak
+      Element.get('user-input').value =
+        currentWordindx > 0 ? `${newSentence} ` : newSentence;
+    } else if (data === null && currentWord === word) {
+      Element.get('user-input').value = `${value.trim()}`;
+    }
+  }
+
+  if (value === selectedSentence) {
+    prevTriesPerWord[currentWordindx].tries += 1;
+  }
+
+  if (prevTriesPerWord[currentWordindx].tries) {
+    // eslint-disable-next-line operator-linebreak
+    prevTriesPerWord[currentWordindx].accuracy =
+      100 / prevTriesPerWord[currentWordindx].tries;
+  }
+
+  updateState({ triesPerWord: prevTriesPerWord });
+
+  if (value === selectedSentence) {
+    endTest();
+  }
 };
 
 function startTest() {
   if (state.isTestRunning) return;
 
   const sentence = grabRandomSentence(sentenceArray);
-  updateState({ isTestRunning: true, selectedSentence: sentence });
+  updateState({
+    isTestRunning: true,
+    selectedSentence: sentence,
+    triesPerWord: sentence
+      .split(' ')
+      .map((word) => ({ word, tries: 0, accuracy: 0 })),
+  });
 
   Element.addEventListener(USER_INPUT_ID, 'input', handleUserInput);
   Element.addEventListener(USER_INPUT_ID, 'paste', (e) => e.preventDefault());

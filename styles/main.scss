@@ -52,6 +52,10 @@ h1 {
   resize: none; /* Prevent manual resizing by user */
 }
 
+.user-input:disabled {
+  color: #ffffff80;
+}
+
 .timer {
   margin: 20px 0;
   font-size: 6rem;

@@ -22,11 +22,9 @@ const sentenceArray = [
 let state = {
   isTestRunning: false,
   selectedSentence: '',
-};
-
-const updateState = (newState) => {
-  const prevState = { ...state };
-  state = { ...prevState, ...newState };
+  startTime: null,
+  timerInterval: null,
+  elapsedTime: '00:00',
 };
 
 // Constants
@@ -51,6 +49,10 @@ const Element = {
     if (el) el.addEventListener(eventType, handler);
   },
 };
+const updateState = (newState) => {
+  const prevState = { ...state };
+  state = { ...prevState, ...newState };
+};
 
 const grabRandomSentence = (sentences) => {
   const randInx = Math.floor(Math.random() * sentences.length);
@@ -62,9 +64,47 @@ function endTest() {
   const { isTestRunning } = state;
   if (!isTestRunning) return;
 
+  Element.get(USER_INPUT_ID).disabled = true;
+  if (state.timerInterval) {
+    clearInterval(state.timerInterval);
+    updateState({ timerInterval: null });
+  }
+
   updateState({ isTestRunning: false });
-  console.warn('Test is over!');
 }
+
+const formatTime = (milliseconds) => {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+
+  const seconds = totalSeconds % 60;
+  let secondString = seconds.toString();
+  if (secondString.length < 2) {
+    secondString = `0${seconds.toString()}`;
+  }
+
+  const minutes = Math.floor(totalSeconds / 60);
+  let minuteString = minutes.toString();
+  if (minuteString.length < 2) {
+    minuteString = `0${minutes.toString()}`;
+  }
+
+  return `${minuteString}:${secondString}`;
+};
+
+const updateTimer = () => {
+  if (!state.startTime) {
+    return;
+  }
+  const elapsedMil = Date.now() - state.startTime;
+  const timeString = formatTime(elapsedMil);
+  Element.set('timer', timeString);
+};
+
+const startTimer = () => {
+  const timerInterval = setInterval(updateTimer, 1000);
+
+  updateState({ startTime: Date.now(), timerInterval });
+};
 
 // Event Handlers
 const handleUserInput = (e) => {
@@ -79,12 +119,14 @@ function startTest() {
 
   const sentence = grabRandomSentence(sentenceArray);
   updateState({ isTestRunning: true, selectedSentence: sentence });
-  console.warn(state);
 
-  Element.set(RANDOM_SENTENCE_EL_ID, sentence);
   Element.addEventListener(USER_INPUT_ID, 'input', handleUserInput);
   Element.addEventListener(USER_INPUT_ID, 'paste', (e) => e.preventDefault());
   Element.addEventListener(USER_INPUT_ID, 'drop', (e) => e.preventDefault());
+
+  Element.set(RANDOM_SENTENCE_EL_ID, sentence);
+
+  startTimer();
 }
 
 startTest();
@@ -93,4 +135,4 @@ startTest();
 
 // TODO: Hide and show button on stop and start!
 // TODO: Add character counter on inpit (characters left)
-// TODO: then also add their error coun there too@
+// TODO: then also add their error coun there too

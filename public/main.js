@@ -19,11 +19,19 @@ const sentenceArray = [
   'Imagine his surprise when he discovered that the safe was full of pudding.',
 ];
 
-let isTestRunning = false;
+let state = {
+  isTestRunning: false,
+  selectedSentence: '',
+};
+
+const updateState = (newState) => {
+  const prevState = { ...state };
+  state = { ...prevState, ...newState };
+};
 
 // Constants
 const RANDOM_SENTENCE_EL_ID = 'random-sentence';
-// const USER_INPUT_ID = 'user-input';
+const USER_INPUT_ID = 'user-input';
 
 // Helpers
 const Element = {
@@ -38,6 +46,10 @@ const Element = {
     const el = Element.get(id);
     if (el) el.innerHTML += html;
   },
+  addEventListener(id, eventType, handler) {
+    const el = Element.get(id);
+    if (el) el.addEventListener(eventType, handler);
+  },
 };
 
 const grabRandomSentence = (sentences) => {
@@ -46,17 +58,34 @@ const grabRandomSentence = (sentences) => {
   return selectedSentence;
 };
 
-function startTest() {
-  if (isTestRunning) return;
+function endTest() {
+  const { isTestRunning } = state;
+  if (!isTestRunning) return;
 
-  isTestRunning = true;
-
-  const sentence = grabRandomSentence(sentenceArray);
-  Element.set(RANDOM_SENTENCE_EL_ID, sentence);
-  // Element.set(USER_INPUT_ID, sentence);
+  updateState({ isTestRunning: false });
+  console.warn('Test is over!');
 }
 
-// function endTest() {}
+// Event Handlers
+const handleUserInput = (e) => {
+  const { value } = e.target;
+  const { selectedSentence } = state;
+
+  if (value === selectedSentence) endTest();
+};
+
+function startTest() {
+  if (state.isTestRunning) return;
+
+  const sentence = grabRandomSentence(sentenceArray);
+  updateState({ isTestRunning: true, selectedSentence: sentence });
+  console.warn(state);
+
+  Element.set(RANDOM_SENTENCE_EL_ID, sentence);
+  Element.addEventListener(USER_INPUT_ID, 'input', handleUserInput);
+  Element.addEventListener(USER_INPUT_ID, 'paste', (e) => e.preventDefault());
+  Element.addEventListener(USER_INPUT_ID, 'drop', (e) => e.preventDefault());
+}
 
 startTest();
 

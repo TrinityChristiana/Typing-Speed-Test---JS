@@ -1,43 +1,62 @@
 import '../styles/main.scss';
 
-// Task 3: An array of sample paragraphs
+// DB
+const sentenceArray = [
+  "You'll see the rainbow bridge after it rains cats and dogs.",
+  'I only enjoy window shopping when the windows are transparent.',
+  'Flying fish flew by the space station.',
+  'The fish listened intently to what the frogs had to say.',
+  'Joyce enjoyed eating pancakes with ketchup.',
+  'The Guinea fowl flies through the air with all the grace of a turtle.',
+  'He excelled at firing people nicely.',
+  'Karen realized the only way she was getting into heaven was to cheat.',
+  'They ran around the corner to find that they had traveled back in time.',
+  'The thick foliage and intertwined vines made the hike nearly impossible.',
+  'I was fishing for compliments and accidentally caught a trout.',
+  'Tomorrow will bring something new, so leave today as a memory.',
+  'The light that burns twice as bright burns half as long.',
+  'I know many children ask for a pony, but I wanted a bicycle with rockets strapped to it.',
+  'Imagine his surprise when he discovered that the safe was full of pudding.',
+];
 
-// Task 3, 4, 5, 6, 7, 8: DOM Elements
+let isTestRunning = false;
 
-// Task 3, 5: State Variables
+// Constants
+const RANDOM_SENTENCE_EL_ID = 'random-sentence';
+// const USER_INPUT_ID = 'user-input';
 
-// Task 3: Pick and display a random paragraph
+// Helpers
+const Element = {
+  get(id) {
+    return document.getElementById(id);
+  },
+  set(id, html) {
+    const el = Element.get(id);
+    if (el) el.innerHTML = html;
+  },
+  append(id, html) {
+    const el = Element.get(id);
+    if (el) el.innerHTML += html;
+  },
+};
 
-// Task 4: Event Listener: Monitor typing and end test if completed
+const grabRandomSentence = (sentences) => {
+  const randInx = Math.floor(Math.random() * sentences.length);
+  const selectedSentence = sentences[randInx];
+  return selectedSentence;
+};
 
-// Function: Start the typing test
 function startTest() {
-  // Task 8: Clear data on start
-  // Task 3: Display the paragraph if test is running
-  // Task 5: Update timer after every second
+  if (isTestRunning) return;
+
+  isTestRunning = true;
+
+  const sentence = grabRandomSentence(sentenceArray);
+  Element.set(RANDOM_SENTENCE_EL_ID, sentence);
+  // Element.set(USER_INPUT_ID, sentence);
 }
 
-// Function: Stop the typing test
-// function endTest() {
-//   // Task 4: Exit if test is not running; otherwise, stop the test
-//   // Task 5: Stop the timer
-//   // Task 6: Calculate and display typing speed
-//   // Task 7: Update the accuracy display element
-// }
-
-// Task 5: Function: Update the timer display
-
-// Task 5: Utility: Format time in HH:MM:SS
-
-// Task 6: Function: Calculate typing speed (WPM)
-
-// Task 7: Function: Calculate typing accuracy
-
-// Task 8: Event Listener: Start button
-
-// Task 8: Event Listener: Stop button
-
-// Task 8: Function: Clear data and reset the UI
+// function endTest() {}
 
 startTest();
 

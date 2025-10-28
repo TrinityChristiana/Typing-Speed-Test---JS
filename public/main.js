@@ -31,6 +31,11 @@ let state = defaultState;
 // Constants
 const RANDOM_SENTENCE_EL_ID = 'random-sentence';
 const USER_INPUT_ID = 'user-input';
+const TIMER_ID = 'timer';
+const TYPING_SPEED_ID = 'typing-speed';
+const TYPING_ACCURACY_ID = 'typing-accuracy';
+const START_BUTTON_ID = 'start-button';
+const STOP_BUTTON_ID = 'stop-button';
 
 // Helpers
 const Element = {
@@ -85,16 +90,21 @@ const calculateTotalAccuracy = () => {
 function endTest() {
   const { isTestRunning } = state;
   if (!isTestRunning) return;
+
+  Element.get(START_BUTTON_ID).style.display = 'block';
+  Element.get(STOP_BUTTON_ID).style.display = 'none';
+  Element.get(USER_INPUT_ID).disabled = true;
+
   updateState({ isTestRunning: false });
 
-  Element.get(USER_INPUT_ID).disabled = true;
   if (state.timerInterval) {
     clearInterval(state.timerInterval);
     updateState({ timerInterval: null });
   }
 
-  Element.set('typing-speed', calculateSpeed());
-  Element.set('typing-accuracy', calculateTotalAccuracy());
+  Element.set(TYPING_SPEED_ID, calculateSpeed());
+  Element.set(TYPING_ACCURACY_ID, calculateTotalAccuracy());
+  Element.get(START_BUTTON_ID).focus({ preventScroll: true });
 }
 
 const formatTime = (milliseconds) => {
@@ -123,25 +133,23 @@ const updateTimer = () => {
   updateState({ elapsedMil });
 
   const timeString = formatTime(elapsedMil);
-  Element.set('timer', timeString);
+  Element.set(TIMER_ID, timeString);
 };
 
 const startTimer = () => {
   const timerInterval = setInterval(updateTimer, 1000);
-
   updateState({ startTime: Date.now(), timerInterval });
 };
 
 // Event Handlers
 const handleUserInput = (e) => {
-  const { data } = e;
   const { value } = e.target;
   const { selectedSentence } = state;
   const { triesPerWord = [] } = state;
   const prevTriesPerWord = [...triesPerWord];
   const currentWordindx = value.trim().split(' ').length - 1;
 
-  if (String(value).endsWith(' ') || data === null) {
+  if (String(value).endsWith(' ') || String(value).endsWith('\n')) {
     const sentenceSplit = selectedSentence.split(' ');
     prevTriesPerWord[currentWordindx].tries += 1;
 
@@ -152,8 +160,8 @@ const handleUserInput = (e) => {
       // eslint-disable-next-line operator-linebreak
       Element.get('user-input').value =
         currentWordindx > 0 ? `${newSentence} ` : newSentence;
-    } else if (data === null && currentWord === word) {
-      Element.get('user-input').value = `${value.trim()}`;
+    } else if (String(value).endsWith('\n')) {
+      Element.get('user-input').value = value.trim();
     }
   }
 
@@ -174,9 +182,24 @@ const handleUserInput = (e) => {
   }
 };
 
+const resetSpace = () => {
+  Element.get(START_BUTTON_ID).style.display = 'none';
+  Element.get(STOP_BUTTON_ID).style.display = 'block';
+  const userInputEl = Element.get(USER_INPUT_ID);
+  Element.set(TIMER_ID, '00:00');
+  Element.set(TYPING_SPEED_ID, '-');
+  Element.set(TYPING_ACCURACY_ID, '-');
+  userInputEl.value = '';
+
+  updateState(defaultState);
+  userInputEl.disabled = false;
+  userInputEl.focus();
+};
+
 function startTest() {
   if (state.isTestRunning) return;
 
+  resetSpace();
   const sentence = grabRandomSentence(sentenceArray);
   updateState({
     isTestRunning: true,
@@ -195,8 +218,24 @@ function startTest() {
   startTimer();
 }
 
-startTest();
+const events = () => {
+  Element.addEventListener(START_BUTTON_ID, 'click', startTest);
+  Element.addEventListener(START_BUTTON_ID, 'keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      if (e.repeat) return; // ignore key held down
+      e.preventDefault(); // prevent Space from scrolling
+      startTest();
+    }
+  });
+  Element.addEventListener(STOP_BUTTON_ID, 'click', endTest);
+};
 
+const startApp = () => {
+  events();
+  Element.get(START_BUTTON_ID).focus({ preventScroll: true });
+};
+
+startApp();
 // Stretch Goals
 
 // TODO: Hide and show button on stop and start!

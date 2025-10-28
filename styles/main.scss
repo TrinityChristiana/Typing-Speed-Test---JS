@@ -1,6 +1,5 @@
 /* Task 2: Style the Application */
 
-
 body {
   font-family: monospace;
   margin: 0;
@@ -96,16 +95,17 @@ h1 {
 
 .stop-button {
   border: 1px #ff2727 solid;
-}
+  display: none;
 
-.stop-button:hover {
-  background: #ff27273b;
+  &:hover,
+  &:focus {
+    background: #ff27273b;
+  }
 }
-
 .start-button {
   border: 1px #09ff00 solid;
-}
-
-.start-button:hover {
-  background: #09ff003b;
+  &:hover,
+  &:focus {
+    background: #09ff003b;
+  }
 }

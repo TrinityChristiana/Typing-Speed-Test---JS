@@ -1,3 +1,5 @@
+import '../styles/main.scss';
+
 // Task 3: An array of sample paragraphs
 
 // Task 3, 4, 5, 6, 7, 8: DOM Elements
@@ -11,11 +13,8 @@
 // Function: Start the typing test
 function startTest() {
   // Task 8: Clear data on start
-
   // Task 3: Display the paragraph if test is running
-
   // Task 5: Update timer after every second
-
 }
 
 // Function: Stop the typing test
@@ -41,3 +40,9 @@ function startTest() {
 // Task 8: Function: Clear data and reset the UI
 
 startTest();
+
+// Stretch Goals
+
+// TODO: Hide and show button on stop and start!
+// TODO: Add character counter on inpit (characters left)
+// TODO: then also add their error coun there too@
